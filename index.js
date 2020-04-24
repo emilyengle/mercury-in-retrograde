@@ -41,6 +41,7 @@ const getRetrogradeStatus = (conv) => {
       }
     });
 };
+
 const getNextRetrogradeDate = (conv) => {
   console.log('Fetching next retrograde date.');
   return fetch('https://www.ismercuryinretrograde.com/')
@@ -54,13 +55,42 @@ const getNextRetrogradeDate = (conv) => {
     .then((data) => {
       const startIndex = data.indexOf('<strong>') + 8;
       const endIndex = data.indexOf('</strong>');
-      const message = data.substring(startIndex, endIndex);
-      conv.ask(message);
+      const fullSentence = data.substring(startIndex, endIndex);
+
+      const dayAndMonth = fullSentence.substring(
+        fullSentence.indexOf('on') + 3,
+        fullSentence.indexOf(',')
+      );
+      conv.ask(`Mercury turns retrograde on ${dayAndMonth}.`);
+    });
+};
+
+const getNextRetrogradeTime = (conv) => {
+  console.log('Fetching next retrograde time.');
+  return fetch('https://www.ismercuryinretrograde.com/')
+    .then((response) => {
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(response.statusText);
+      } else {
+        return response.text();
+      }
+    })
+    .then((data) => {
+      const startIndex = data.indexOf('<strong>') + 8;
+      const endIndex = data.indexOf('</strong>');
+      const fullSentence = data.substring(startIndex, endIndex);
+
+      const time = fullSentence.substring(
+        fullSentence.indexOf('at') + 3,
+        fullSentence.indexOf(':') + 5
+      );
+      conv.ask(`Mercury turns retrograde at ${time} that day.`);
     });
 };
 
 app.intent('Is mercury in retrograde?', getRetrogradeStatus);
 app.intent('When will it be in retrograde?', getNextRetrogradeDate);
+app.intent('What time will it be in retrograde?', getNextRetrogradeTime);
 app.fallback((conv) => {
   conv.ask(`I couldn't understand. Can you say that again?`);
 });
