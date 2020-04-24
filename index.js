@@ -27,9 +27,9 @@ const getRetrogradeStatus = (conv) => {
       const message = data.is_retrograde
         ? 'Mercury is in retrograde.'
         : "Mercury is not in retrograde. It's your fault.";
-      conv.close(message);
+      conv.ask(message);
       if (conv.screen) {
-        conv.close(
+        conv.ask(
           new BasicCard({
             text: message,
             image: new Image({
@@ -55,7 +55,7 @@ const getNextRetrogradeDate = (conv) => {
       const startIndex = data.indexOf('<strong>') + 8;
       const endIndex = data.indexOf('</strong>');
       const message = data.substring(startIndex, endIndex);
-      conv.close(message);
+      conv.ask(message);
     });
 };
 
