@@ -41,7 +41,27 @@ const getRetrogradeStatus = (conv) => {
       }
     });
 };
+const getNextRetrogradeDate = (conv) => {
+  console.log('Fetching next retrograde date.');
+  return fetch('https://www.ismercuryinretrograde.com/')
+    .then((response) => {
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(response.statusText);
+      } else {
+        console.log('raw response', response);
+        return response.json();
+      }
+    })
+    .then((data) => {
+      console.log('returned from page: ', data);
+      conv.close('Working on it');
+    });
+};
 
 app.intent('Is mercury in retrograde?', getRetrogradeStatus);
+app.intent('When will it be in retrograde?', getNextRetrogradeDate);
+app.fallback((conv) => {
+  conv.ask(`I couldn't understand. Can you say that again?`);
+});
 
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
