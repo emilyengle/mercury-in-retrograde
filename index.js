@@ -48,13 +48,14 @@ const getNextRetrogradeDate = (conv) => {
       if (response.status < 200 || response.status >= 300) {
         throw new Error(response.statusText);
       } else {
-        console.log('raw response', response);
-        return response.json();
+        return response.text();
       }
     })
     .then((data) => {
-      console.log('returned from page: ', data);
-      conv.close('Working on it');
+      const startIndex = data.indexOf('<strong>') + 8;
+      const endIndex = data.indexOf('</strong>');
+      const message = data.substring(startIndex, endIndex);
+      conv.close(message);
     });
 };
 
